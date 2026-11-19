@@ -8,3 +8,6 @@ artifacts/*
 media/jobs/*
 !media/jobs/.gitkeep
 *.db*:Zone.Identifier
+
+# 개인 편집기 설정
+.vscode/
