@@ -39,6 +39,16 @@
 
 4개 컨테이너(`web`, `worker`, `redis`, `postgres`)를 Docker Compose로 실행하며, 추론은 CPU로 합니다. 자세한 구성도는 [산출물 2](reports/02_시스템_아키텍처.md)에 있습니다.
 
+## 🙋 제공 코드와 직접 한 일
+
+과제평가라서 기본 코드는 제공받았고, 그 위에서 학습·서비스 실행·검증을 직접 했습니다.
+
+| 구분 | 내용 |
+|---|---|
+| **제공 코드** | `training/finetune.py` (수정 없이 실행 옵션만 사용) · `ai/` 서비스 코드 · `templates/` · `compose.yaml` · `Dockerfile` · `tests/test_api.py` |
+| **직접 한 일** | 데이터 배치·md5 중복 점검 · A/B 학습 + 가설을 세워 추가 실험 C/D 설계 · Validation 기준 모델 선택 · Docker 4개 서비스 실행·검증 · 장애 테스트(Redis 중단 503, worker 중단·복구, 413/400/404) · 산출물 8종 작성 |
+| **직접 작성한 코드** | `reports/evaluate_test.py` (Test 1회 평가) · `reports/measure_timings.py` (동기/비동기 × 캐시 MISS/HIT 시간 측정) |
+
 ## ▶ 실행
 
 `dataset/`과 `artifacts/`(학습 모델)는 용량 때문에 저장소에서 제외했습니다. 학습 설정과 실험별 명령은 [산출물 1](reports/01_FineTuning_결과보고서.md)에 있습니다.
@@ -51,8 +61,7 @@
 python -m training.finetune --data dataset --output artifacts/beans_resnet18_full_lr5e-5 \
   --epochs 3 --batch-size 8 --lr 0.00005
 # 3) 서비스 실행
-cp .env.example .env
-sed -i 's|^MODEL_PATH=.*|MODEL_PATH=artifacts/beans_resnet18_full_lr5e-5|' .env   # 최종 모델 C
+cp .env.example .env                    # 기본값이 최종 모델 C 경로
 docker compose up -d --build            # redis · postgres · web · worker
 curl http://127.0.0.1:8000/health       # {"status":"ok"}
 ```
